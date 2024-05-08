@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    </head>
+    <body>
+        <h3>Online Payment</h3>
+        <input id="payment_field" type="text" placeholder="Enter amount here" />
+
+        <div>
+            <button type="button" onclick="paymentStart()">Pay</button>
+        </div>
+
+        <script>
+            function paymentStart() {
+                console.log("payment started..");
+                var amount = $("#payment_field").val();
+                console.log(amount);
+                if (amount === "" || amount === null) {
+                    alert("amount is required");
+                    return;
+                }
+            
+            $.ајаx(
+            {
+                 url: "pay.jsp",
+                 data: JSON.stringify({amount:amount,info:'order_request'}),
+                 contentType: "application/json",
+                 type: "POST",
+                 dataType:"json",
+                 success: function(response){
+                       console.log(response);
+        if (response.status == "created") { 
+
+             //open payment form
+        let options = {
+        key: "rzp_test_haDRsJIQo9vFPJ",
+        amount: response.amount,
+        currency: "INR",
+        name: "Smart Contact Manager",
+        description: "Donation",
+        image:"https://yt3.ggpht.com/4BGUu55s_ko/AAAAAAAAAAI/AAAAAAAAAAA/3Cf1_C408Uo/s108-c-k-c0x00ffffff-no-rj-mo/photo.jpg",
+        order_id:response.id,
+        handler: function (response) {
+        console.log(response.razorpay_payment_id); console.log(response.razorpay_order_id); 
+        console.log(response.razorpay_signature);
+        console.log("payment successful !!"); 
+        swal(“Good job!”, “congrates !! Payment successful !!”, “success”):
+        },
+        prefill: {
+            name: “ ”,
+        email: “ “,
+        contact: “ “,
+         },
+
+        notes: {
+           address: "LearnCodeWith Durgesh ",
+        },
+        theme: {
+           color: "#3399cc",
+        },
+                         };
+
+        let rzp = new Razorpay (options);
+
+        rzp.on("payment. failed", function (response) { 
+        console.log(response.error.code);
+        console.log(response.error.description);
+        console.log(response.error.source);
+        console.log(response.error.step);
+        console.log(response.error.reason);
+        console.log(response.error.metadata.order_id); console.log(response.error.metadata.payment_id); 
+        swal(“Failed!!”, “Oops payment failed !!”, “error”);
+        });
+
+        rzp.open();
+                         }
+                       },
+                error: function(error){
+                      console.log(error)
+                      alert("something went wrong !!")
+                  }
+              }
+              }
+        </script>
+    </body>
+</html>
